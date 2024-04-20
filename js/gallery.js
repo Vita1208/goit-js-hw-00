@@ -77,7 +77,7 @@ const images = [
   },
 ];
   
-const gallery = document.querySelector(".gallery");
+const galleryMarkup = document.querySelector(".gallery");
 const markup = images.reduce((html, image) => {
     return (html += `<li class="gallery-item">
   <a class="gallery-link" href="${image.original}">
@@ -90,24 +90,26 @@ const markup = images.reduce((html, image) => {
   </a>
 </li>`)
 }, "");
-gallery.insertAdjacentHTML("beforeend", markup);
+galleryMarkup.insertAdjacentHTML("beforeend", markup);
 
-const handleClick = (event) => {
-    event.preventDefault()
-    if (event.target === event.currentTarget || event.target.classList.contains("gallery-link")) {
-        return
-    }
-    const bigImage = event.target.getAttribute("data-source")
-    console.log(bigImage)
-    const imageAlt = event.target.getAttribute("alt")
-    const instance = basicLightbox.create(`
-    <div class="modal">
-        <img src="${bigImage}" alt="${imageAlt}">
-    </div>
-`);
-    instance.show()
-}
-    
-gallery.addEventListener("click", handleClick);
+const blockDefaultAction = (event) => {
+  event.preventDefault();
+};
+
+galleryMarkup.addEventListener("click", blockDefaultAction);
+
+const clickOnImg = (event) => {
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+
+  const instance = basicLightbox.create(`
+  <img src="${event.target.dataset.source}" width="1400" height="900">
+  `);
+
+  instance.show();
+};
+
+galleryMarkup.addEventListener("click", clickOnImg);
 
 
